@@ -22,4 +22,4 @@ mongoose.connection.on('disconnected', () => {
 
 connect();
 
-// require('./mongoose_schema');
+require('./mongoose_schema');
