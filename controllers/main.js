@@ -1,13 +1,20 @@
 //const User = require('../models/user');
+const Board = require("../models/board");
 
 /* Home */
 const home = async(req, res) => {
     // res.render('index', {
     //     title: "Homepage"
     // });
-    res.send('<h1>Đỗ Thế Anh</h1><h2>1712271</h2>');
+    res.redirect("/homeDashboard");
+};
+
+const homeDashboard = async(req, res) => {///////////////////////////////////////////////////// tạm thời
+    const allBoards = await Board.getAllBoards();
+    res.send(allBoards);
 };
 
 module.exports = {
     home,
+    homeDashboard,
 };

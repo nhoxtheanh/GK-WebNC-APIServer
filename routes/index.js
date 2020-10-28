@@ -18,6 +18,9 @@ const handleError = (err, res) => {
 /* GET Home page. */
 router.get('/', mainController.home);
 
+/* GET Home page. */
+router.get('/homeDashboard', mainController.homeDashboard);///////////////////////////////////////////////////// tạm thời
+
 // /* Login */
 // router.get('/login', userController.loginView);
 // router.post('/login', userController.login);
