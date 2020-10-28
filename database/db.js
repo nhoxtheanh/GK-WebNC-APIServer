@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-
-let dbURI = 'mongodb+srv://nhoxtheanh:12345@cluster0.w1jg8.mongodb.net/GK-WebNC?retryWrites=true&w=majority';
+require('dotenv').config()
+let dbURI = process.env.MONGO_URI;
 
 const connect = () => {
   setTimeout(() => mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false }), 1000);
