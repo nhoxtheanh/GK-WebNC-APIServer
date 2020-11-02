@@ -1,11 +1,16 @@
 // passport
-// const passport = require("passport");
 // const bcrypt = require("bcryptjs");
 // require("../routes/passport.js");
 // var path = require('path');
 // const fs = require("fs");
 // const requireLogin = require("./../middlewares/auth.mdw");
-// const constant = require("../Utils/constant");
+var passport = require('passport');
+var passportJWT = require('passport-jwt');
+var ExtractJwt = passportJWT.ExtractJwt;
+var JwtStrategy = passportJWT.Strategy;
+var jwtOptions = {"secretOrKey" : "nhoxtheanh"};
+var jwt = require('jsonwebtoken');
+var jwt = require('jsonwebtoken');
 
 const User = require("../models/user");
 
@@ -18,25 +23,22 @@ const User = require("../models/user");
 //     });
 // };
 
-// const login = async(req, res, next) => {
-//     passport.authenticate("local", (err, user, info) => {
-//         if (err) {
-//             return next(err);
-//         }
-//         if (!user) {
-//             req.flash("error", info.message);
-//             res.redirect("/login");
-//             return;
-//         }
-//         req.logIn(user, (err) => {
-//             if (err) {
-//                 return next(err);
-//             }
-//             const url = req.query.retUrl || "/";
-//             return res.redirect(url);
-//         });
-//     })(req, res, next);
-// };
+const login = async(req, res, next) => {
+  const { username, password } = req.body;
+  if (username && password) {
+    var user = await User.findUsername(username);
+    if (!user) {
+      res.status(401).json({ msg: 'Vui lòng kiểm tra lại username.', user });
+    }
+   if (user.password === password) {  // đăng nhập hợp lệ => lấy userID gắn vào payload của token và gửi về cho client
+      var payload = { id: user.userID };
+      var token = jwt.sign(payload, jwtOptions.secretOrKey);
+      res.json({ msg: 'Đăng nhập thành công!', token: token });
+    } else {
+      res.status(401).json({ msg: 'Sai mật khẩu.' });
+    }
+  }
+};
 
 // const signupView = async(req, res) => {
 //     res.render("signup", {
@@ -113,7 +115,7 @@ const signup = async (req, res, next) => {
 
 module.exports = {
 //     loginView,
-//     login,
+     login,
 //     signupView,
      signup,
 //     logout,
