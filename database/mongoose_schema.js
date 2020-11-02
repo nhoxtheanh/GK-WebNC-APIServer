@@ -6,12 +6,12 @@ const AutoIncrement = require("mongoose-sequence")(mongoose);
 // User
 const userSchema = new mongoose.Schema({
     username: String,
-    email: String,
+    email: { type: String, default: "" },
     password: String,
-    fullName: String,
-    gender: String,
+    fullname: String,
+    gender: { type: String, default: "" },
     birthDate: Date,
-    address: String,
+    address: { type: String, default: "" },
     createdDate: Date,
 }, { collection: "Users" }, { toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
@@ -62,7 +62,7 @@ mongoose.model("Card", cardSchema);
 //     username: 'nhoxtheanh',
 //     email: 'nhoxtheanh@facebook.com',
 //     password: '12345',
-//     fullName: 'Đỗ Thế Anh',
+//     fullname: 'Đỗ Thế Anh',
 //     gender: 'Nam',
 //     birthDate: today,
 //     address: 'Thành phố Hồ Chí Minh',

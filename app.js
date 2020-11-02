@@ -1,4 +1,5 @@
 var express = require('express');
+const bodyParser = require('body-parser');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var app = express();
@@ -14,8 +15,10 @@ require('./database/db');
 //   res.send('Hello World!');
 // });
 app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/', indexRouter);
-//app.use('/users', usersRouter);
+app.use('/users', usersRouter);
 
 app.listen(PORT, function () {
   console.log('App listening on port ' + PORT + '!');
