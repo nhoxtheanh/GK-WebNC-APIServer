@@ -12,11 +12,16 @@ const home = async(req, res) => {
 
 const homeDashboard = async(req, res) => {
     token = req.headers.authorization;
-    const payload = jwtDecode(token);
-    const userID = payload.userID;
-    //const allBoards = await Board.getAllBoards();
-    const allBoards = await Board.getAllBoardsByUser(userID);
-    res.send(allBoards);
+    try {
+        const payload = jwtDecode(token);
+        const userID = payload.userID;
+        //const allBoards = await Board.getAllBoards();
+        const allBoards = await Board.getAllBoardsByUser(userID);
+        res.json({ status: 1, msg: "Ok", allBoards: allBoards });
+    }
+    catch(err) {
+        res.json({ status: -1, msg: err })
+    }
 };
 
 module.exports = {
