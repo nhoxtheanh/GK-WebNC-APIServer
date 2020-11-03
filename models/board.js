@@ -8,7 +8,7 @@ module.exports = {
         return Board.find().exec();
     },
     getAllBoardsByUser(userID) {
-        return Board.findOne({ ownerID: userID }).exec();
+        return Board.find({ ownerID: userID }).exec();
     },
     addBoard(userID, name) {
         return new Board({

@@ -10,7 +10,6 @@ var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
 var jwtOptions = {"secretOrKey" : "nhoxtheanh"};
 var jwt = require('jsonwebtoken');
-var jwt = require('jsonwebtoken');
 
 const User = require("../models/user");
 
@@ -31,9 +30,10 @@ const login = async(req, res, next) => {
       res.json({ status: -1, msg: 'Vui lòng kiểm tra lại username.', user });
     }
    if (user.password === password) {  // đăng nhập hợp lệ => lấy userID gắn vào payload của token và gửi về cho client
-      var payload = { id: user.userID };
+      var payload = { userID: user.userID };
       var token = jwt.sign(payload, jwtOptions.secretOrKey);
-      res.json({ status: 1, msg: 'Đăng nhập thành công!', token: token });
+      var fullname = user.fullname;
+      res.json({ status: 1, msg: 'Đăng nhập thành công!', token: token, fullname: fullname });
     } else {
       res.json({ status: 0, msg: 'Sai mật khẩu.' });
     }
