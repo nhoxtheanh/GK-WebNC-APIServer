@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 require('../database/db');
 //const User = mongoose.model('User');
 const Board = mongoose.model('Board');
+const Column = mongoose.model('Column');
 
 module.exports = {
     getAllBoards() {
@@ -16,10 +17,45 @@ module.exports = {
             name: name,
         }).save();
     },
-    // removeFavoriteDish(userID, dishID) {
-    //     return UserFavoriteDish.deleteOne({
-    //         dishID: dishID,
-    //         userID: userID
+    initColumns(boardID) {
+        const Column1 = new Column({
+            boardID:  boardID, 
+            name: 'Went well',
+        }).save();
+        const Column2 = new Column({
+            boardID:  boardID, 
+            name: 'To improve',
+        }).save();
+        const Column3 = new Column({
+            boardID:  boardID, 
+            name: 'Action Items',
+        }).save();
+        return Column1;
+    },
+    updateBoardName(boardID, name) {
+        return new Promise(async(resolve, reject) => {
+            const board = await Board.findOne({ boardID: boardID })
+                .exec();
+            board.name = name;
+            await board.save();
+            resolve(board);
+        })
+    },
+    deleteBoardByID(boardID) {
+        return new Promise(async(resolve, reject) => {
+            const board = await Board.findOne({ boardID: boardID })
+                .exec();
+                board.isActive = false;
+            await board.save();
+
+            const columns = await Column.updateMany({boardID: boardID}, {isActive: false});
+
+            resolve(board);
+        })
+    },
+    // deleteBoardByID(boardID) {
+    //     return Board.deleteOne({
+    //         boardID: boardID
     //     }).exec();
     // },
     // getFavoriteDish(query, option) {

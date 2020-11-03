@@ -24,7 +24,54 @@ const homeDashboard = async(req, res) => {
     }
 };
 
+const createBoard = async(req, res) => {
+    token = req.headers.authorization;
+    name = req.body.boardName;
+    try {
+        const payload = jwtDecode(token);
+        const userID = payload.userID;
+        const b = await Board.addBoard(userID, name);
+        const initCols = await Board.initColumns(b.boardID);
+        res.json({ status: 1, msg: "Ok" });
+    }
+    catch(err) {
+        res.json({ status: -1, msg: err })
+    }
+};
+
+const renameBoard = async(req, res) => {
+    token = req.headers.authorization;
+    boardID = req.body.boardID;
+    name = req.body.boardName;
+    try {
+        const payload = jwtDecode(token);
+        const userID = payload.userID;
+        const b = await Board.updateBoardName(boardID, name);
+        res.json({ status: 1, msg: "Ok" });
+    }
+    catch(err) {
+        res.json({ status: -1, msg: err })
+    }
+};
+
+const deleteBoard = async(req, res) => {
+    token = req.headers.authorization;
+    boardID = req.body.boardID;
+    try {
+        const payload = jwtDecode(token);
+        const userID = payload.userID;
+        const b = await Board.deleteBoardByID(boardID);
+        res.json({ status: 1, msg: "Ok" });
+    }
+    catch(err) {
+        res.json({ status: -1, msg: err })
+    }
+};
+
 module.exports = {
     home,
     homeDashboard,
+    createBoard,
+    renameBoard,
+    deleteBoard
 };

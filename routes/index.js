@@ -19,7 +19,11 @@ const handleError = (err, res) => {
 router.get('/', mainController.home);
 
 /* GET Home page. */
-router.get('/homeDashboard', mainController.homeDashboard);///////////////////////////////////////////////////// tạm thời
+router.get('/homeDashboard', mainController.homeDashboard);
+
+router.post('/homeDashboard/createBoard', mainController.createBoard);
+router.post('/homeDashboard/renameBoard', mainController.renameBoard);
+router.post('/homeDashboard/deleteBoard', mainController.deleteBoard);
 
 // /* Login */
 // router.get('/login', userController.loginView);
