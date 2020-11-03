@@ -28,14 +28,14 @@ const login = async(req, res, next) => {
   if (username && password) {
     var user = await User.findUsername(username);
     if (!user) {
-      res.status(401).json({ msg: 'Vui lòng kiểm tra lại username.', user });
+      res.json({ status: -1, msg: 'Vui lòng kiểm tra lại username.', user });
     }
    if (user.password === password) {  // đăng nhập hợp lệ => lấy userID gắn vào payload của token và gửi về cho client
       var payload = { id: user.userID };
       var token = jwt.sign(payload, jwtOptions.secretOrKey);
-      res.json({ msg: 'Đăng nhập thành công!', token: token });
+      res.json({ status: 1, msg: 'Đăng nhập thành công!', token: token });
     } else {
-      res.status(401).json({ msg: 'Sai mật khẩu.' });
+      res.json({ status: 0, msg: 'Sai mật khẩu.' });
     }
   }
 };

@@ -8,7 +8,7 @@ router.get('/', function(req, res) {
 });
 
 // đăng ký tài khoản
-router.post('/register', userController.signup)
+router.post('/signup', userController.signup)
 
 // đăng nhập
 router.post('/login', userController.login)
