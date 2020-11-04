@@ -53,6 +53,9 @@ module.exports = {
             resolve(board);
         })
     },
+    getBoardColumns(boardID) {
+        return Column.find({ boardID: boardID }).exec();    /// TODO: hiện tại mới chỉ get đến Column, chưa xử lý card
+    },
     // deleteBoardByID(boardID) {
     //     return Board.deleteOne({
     //         boardID: boardID

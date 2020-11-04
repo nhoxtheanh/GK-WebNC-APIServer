@@ -68,10 +68,25 @@ const deleteBoard = async(req, res) => {
     }
 };
 
+const getBoardDetail = async(req, res) => {
+    const boardID = req.params.boardID;
+    token = req.headers.authorization;
+    try {
+        const payload = jwtDecode(token);
+        const userID = payload.userID;
+        const boardDetails = await Board.getBoardColumns(boardID);      /// TODO: hiện tại mới chỉ get đến Column, chưa xử lý card
+        res.json({ status: 1, msg: "Ok", boardDetails: boardDetails });
+    }
+    catch(err) {
+        res.json({ status: -1, msg: err })
+    }
+};
+
 module.exports = {
     home,
     homeDashboard,
     createBoard,
     renameBoard,
-    deleteBoard
+    deleteBoard,
+    getBoardDetail
 };
