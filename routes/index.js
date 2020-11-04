@@ -27,6 +27,9 @@ router.post('/homeDashboard/deleteBoard', mainController.deleteBoard);
 
 router.get('/boardDetail/:boardID', mainController.getBoardDetail);
 
+router.get('/boardDetail/getCards/:columnID', mainController.getCard);
+router.post('/boardDetail/addCard', mainController.addCard);
+
 
 // /* Login */
 // router.get('/login', userController.loginView);

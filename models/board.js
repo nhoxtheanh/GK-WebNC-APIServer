@@ -3,6 +3,7 @@ require('../database/db');
 //const User = mongoose.model('User');
 const Board = mongoose.model('Board');
 const Column = mongoose.model('Column');
+const Card = mongoose.model('Card');
 
 module.exports = {
     getAllBoards() {
@@ -54,8 +55,17 @@ module.exports = {
         })
     },
     getBoardColumns(boardID) {
-        return Column.find({ boardID: boardID }).exec();    /// TODO: hiện tại mới chỉ get đến Column, chưa xử lý card
+        return Column.find({ boardID: boardID }).exec();
     },
+    addCards(columnID, content) {
+        return new Card({
+            columnID:  columnID,
+            content: content,
+        }).save();
+    },
+    getCards(columnID){
+        return Card.find({ columnID: columnID }).exec();
+    }
     // deleteBoardByID(boardID) {
     //     return Board.deleteOne({
     //         boardID: boardID
