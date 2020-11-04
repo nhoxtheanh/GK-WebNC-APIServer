@@ -52,7 +52,7 @@ module.exports = {
         fullname: info.fullname || "",
         gender: info.gender || "",
         email: info.email || "",
-        birthDate: info.birthDate || "",
+        //birthDate: info.birthDate || "",
         address: info.address || "",
       }
     ).exec();

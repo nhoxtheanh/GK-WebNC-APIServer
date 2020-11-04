@@ -4,12 +4,12 @@
 // var path = require('path');
 // const fs = require("fs");
 // const requireLogin = require("./../middlewares/auth.mdw");
-var passport = require('passport');
-var passportJWT = require('passport-jwt');
+var passport = require("passport");
+var passportJWT = require("passport-jwt");
 var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
-var jwtOptions = {"secretOrKey" : "nhoxtheanh"};
-var jwt = require('jsonwebtoken');
+var jwtOptions = { secretOrKey: "nhoxtheanh" };
+var jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
 
@@ -22,20 +22,27 @@ const User = require("../models/user");
 //     });
 // };
 
-const login = async(req, res, next) => {
+const login = async (req, res, next) => {
   const { username, password } = req.body;
   if (username && password) {
     var user = await User.findUsername(username);
     if (!user) {
-      res.json({ status: -1, msg: 'Vui lòng kiểm tra lại username.', user });
+      res.json({ status: -1, msg: "Vui lòng kiểm tra lại username.", user });
     }
-   if (user.password === password) {  // đăng nhập hợp lệ => lấy userID gắn vào payload của token và gửi về cho client
+    if (user.password === password) {
+      // đăng nhập hợp lệ => lấy userID gắn vào payload của token và gửi về cho client
       var payload = { userID: user.userID };
       var token = jwt.sign(payload, jwtOptions.secretOrKey);
       var fullname = user.fullname;
-      res.json({ status: 1, msg: 'Đăng nhập thành công!', token: token, fullname: fullname, userID: user.userID });
+      res.json({
+        status: 1,
+        msg: "Đăng nhập thành công!",
+        token: token,
+        fullname: fullname,
+        userID: user.userID,
+      });
     } else {
-      res.json({ status: 0, msg: 'Sai mật khẩu.' });
+      res.json({ status: 0, msg: "Sai mật khẩu." });
     }
   }
 };
@@ -67,7 +74,7 @@ const signup = async (req, res, next) => {
   }
 };
 
-const getUserInfo = async(req, res) => {
+const getUserInfo = async (req, res) => {
   const userID = req.params.userID;
   try {
     let userInfo = await User.getUser(userID);
@@ -75,6 +82,27 @@ const getUserInfo = async(req, res) => {
       res.json({ status: 1, msg: "Got User", userInfo: userInfo });
     } else {
       res.json({ status: -1, msg: "User not found" });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+const editUserInfo = async (req, res) => {
+  const userID = req.params.userID;
+  try {
+    const info = {
+      fullname: req.body.fullname || "",
+      gender: req.body.gender || "",
+      email: req.body.email || "",
+      //birthDate: req.body.birthDate || "",
+      address: req.body.address || "",
+    };
+    const user = await User.setUserInfo(userID, info);
+    if (user) {
+      res.json({ status: 1, msg: "Success", user: user });
+    } else {
+      res.json({ status: -1, msg: "Failed" });
     }
   } catch (error) {
     next(error);
@@ -126,20 +154,20 @@ const getUserInfo = async(req, res) => {
 //     }
 // };
 
-
 module.exports = {
-//     loginView,
-     login,
-//     signupView,
-     signup,
-     getUserInfo,
-//     logout,
-//     profile,
-//     yourInfo,
-//     editInfoView,
-//     editInfo,
-//     uploadUserImageCtrl,
-//     changePwdView,
-//     changePwd,
-//     doFavorite,
+  //     loginView,
+  login,
+  //     signupView,
+  signup,
+  getUserInfo,
+  editUserInfo,
+  //     logout,
+  //     profile,
+  //     yourInfo,
+  //     editInfoView,
+  //     editInfo,
+  //     uploadUserImageCtrl,
+  //     changePwdView,
+  //     changePwd,
+  //     doFavorite,
 };
