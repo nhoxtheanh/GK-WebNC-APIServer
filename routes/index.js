@@ -29,6 +29,8 @@ router.get('/boardDetail/:boardID', mainController.getBoardDetail);
 
 router.get('/boardDetail/getCards/:columnID', mainController.getCard);
 router.post('/boardDetail/addCard', mainController.addCard);
+router.post('/boardDetail/editCard', mainController.editCard);
+router.post('/boardDetail/deleteCard', mainController.deleteCard);
 
 
 // /* Login */

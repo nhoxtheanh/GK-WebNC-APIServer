@@ -85,7 +85,7 @@ const addCard = async (req, res) => {
   try {
     const payload = jwtDecode(token);
     const userID = payload.userID;
-    const col = await Board.addCards(columnID, content);
+    const col = await Board.addCard(columnID, content);
     res.json({ status: 1, msg: "Ok", column: col });
   } catch (err) {
     res.json({ status: -1, msg: err });
@@ -105,6 +105,35 @@ const getCard = async (req, res) => {
   }
 };
 
+const editCard = async (req, res) => {
+    token = req.headers.authorization;
+    const newContent = req.body.newContent;
+    const cardID = req.body.cardID;
+  
+    try {
+      const payload = jwtDecode(token);
+      const userID = payload.userID;
+      const card = await Board.editCard(cardID, newContent);
+      res.json({ status: 1, msg: "Ok", card: card });
+    } catch (err) {
+      res.json({ status: -1, msg: err });
+    }
+  };
+
+  const deleteCard = async (req, res) => {
+    token = req.headers.authorization;
+    const cardID = req.body.cardID;
+  
+    try {
+      const payload = jwtDecode(token);
+      const userID = payload.userID;
+      const card = await Board.deleteCard(cardID);
+      res.json({ status: 1, msg: "Ok", card: card });
+    } catch (err) {
+      res.json({ status: -1, msg: err });
+    }
+  };
+
 module.exports = {
   home,
   homeDashboard,
@@ -113,5 +142,5 @@ module.exports = {
   deleteBoard,
   getBoardDetail,
   getCard,
-  addCard,
+  addCard,editCard,deleteCard
 };
