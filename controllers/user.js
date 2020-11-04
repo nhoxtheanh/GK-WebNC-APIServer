@@ -33,7 +33,7 @@ const login = async(req, res, next) => {
       var payload = { userID: user.userID };
       var token = jwt.sign(payload, jwtOptions.secretOrKey);
       var fullname = user.fullname;
-      res.json({ status: 1, msg: 'Đăng nhập thành công!', token: token, fullname: fullname });
+      res.json({ status: 1, msg: 'Đăng nhập thành công!', token: token, fullname: fullname, userID: user.userID });
     } else {
       res.json({ status: 0, msg: 'Sai mật khẩu.' });
     }
@@ -61,6 +61,20 @@ const signup = async (req, res, next) => {
         req.body.password.trim()
       );
       res.json({ status: 1, msg: "Tạo tài khoản thành công." });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getUserInfo = async(req, res) => {
+  const userID = req.params.userID;
+  try {
+    let userInfo = await User.getUser(userID);
+    if (userInfo) {
+      res.json({ status: 1, msg: "Got User", userInfo: userInfo });
+    } else {
+      res.json({ status: -1, msg: "User not found" });
     }
   } catch (error) {
     next(error);
@@ -118,6 +132,7 @@ module.exports = {
      login,
 //     signupView,
      signup,
+     getUserInfo,
 //     logout,
 //     profile,
 //     yourInfo,
