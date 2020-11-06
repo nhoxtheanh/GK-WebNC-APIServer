@@ -86,6 +86,26 @@ module.exports = {
       resolve(card);
     });
   },
+  setBoardURL(boardID, sharedURL) {
+    return new Promise(async (resolve, reject) => {
+      const board = await Board.findOne({ boardID: boardID }).exec();
+      board.sharedURL = sharedURL;
+      await board.save();
+      resolve(board);
+    });
+  },
+  // generateAllBoardURL() {
+  //   return new Promise(async (resolve, reject) => {
+  //     const board = await Board.updateMany(
+  //       { },
+  //       { sharedURL: "noURL" }
+  //     );
+  //     resolve(board);
+  //   });
+  // },
+  findBoardByURL(boardURL) {
+    return Board.findOne({ sharedURL: boardURL }).exec();
+  },
   // deleteBoardByID(boardID) {
   //     return Board.deleteOne({
   //         boardID: boardID

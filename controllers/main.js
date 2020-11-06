@@ -70,7 +70,7 @@ const getBoardDetail = async (req, res) => {
   try {
     const payload = jwtDecode(token);
     const userID = payload.userID;
-    const boardDetails = await Board.getBoardColumns(boardID); /// TODO: hiện tại mới chỉ get đến Column, chưa xử lý card
+    const boardDetails = await Board.getBoardColumns(boardID);
     res.json({ status: 1, msg: "Ok", boardDetails: boardDetails });
   } catch (err) {
     res.json({ status: -1, msg: err });
@@ -106,33 +106,73 @@ const getCard = async (req, res) => {
 };
 
 const editCard = async (req, res) => {
-    token = req.headers.authorization;
-    const newContent = req.body.newContent;
-    const cardID = req.body.cardID;
-  
-    try {
-      const payload = jwtDecode(token);
-      const userID = payload.userID;
-      const card = await Board.editCard(cardID, newContent);
-      res.json({ status: 1, msg: "Ok", card: card });
-    } catch (err) {
-      res.json({ status: -1, msg: err });
-    }
-  };
+  token = req.headers.authorization;
+  const newContent = req.body.newContent;
+  const cardID = req.body.cardID;
 
-  const deleteCard = async (req, res) => {
-    token = req.headers.authorization;
-    const cardID = req.body.cardID;
-  
-    try {
-      const payload = jwtDecode(token);
-      const userID = payload.userID;
-      const card = await Board.deleteCard(cardID);
-      res.json({ status: 1, msg: "Ok", card: card });
-    } catch (err) {
-      res.json({ status: -1, msg: err });
-    }
-  };
+  try {
+    const payload = jwtDecode(token);
+    const userID = payload.userID;
+    const card = await Board.editCard(cardID, newContent);
+    res.json({ status: 1, msg: "Ok", card: card });
+  } catch (err) {
+    res.json({ status: -1, msg: err });
+  }
+};
+
+const deleteCard = async (req, res) => {
+  token = req.headers.authorization;
+  const cardID = req.body.cardID;
+
+  try {
+    const payload = jwtDecode(token);
+    const userID = payload.userID;
+    const card = await Board.deleteCard(cardID);
+    res.json({ status: 1, msg: "Ok", card: card });
+  } catch (err) {
+    res.json({ status: -1, msg: err });
+  }
+};
+
+function generateRandomString(length) {
+  var result           = '';
+  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for ( var i = 0; i < length; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
+const sharedBoard = async (req, res) => {
+  token = req.headers.authorization;
+  boardID = req.body.boardID;
+  host = req.body.host;
+  try {
+    const payload = jwtDecode(token);
+    const userID = payload.userID;
+    const sharedURL = host + '/sharedBoard/'+ generateRandomString(10);
+    const b = await Board.setBoardURL(boardID, sharedURL);
+    res.json({ status: 1, msg: "Ok", board: b });
+  } catch (err) {
+    res.json({ status: -1, msg: err });
+  }
+};
+
+const getSharedBoardDetail = async (req, res) => {
+  const boardKey = req.params.boardKey;
+  const boardURL =  req.headers['referer'] || req.headers.referrer || req.headers.referer || req.header('Referrer') || req.header('Referer') || req.get('Referrer');
+  token = req.headers.authorization;
+  try {
+    const payload = jwtDecode(token);
+    const userID = payload.userID;
+    const b = await Board.findBoardByURL(boardURL);
+    const boardDetails = await Board.getBoardColumns(b.boardID);
+    res.json({ status: 1, msg: "Ok", boardDetails: boardDetails });
+  } catch (err) {
+    res.json({ status: -1, msg: err });
+  }
+};
 
 module.exports = {
   home,
@@ -142,5 +182,9 @@ module.exports = {
   deleteBoard,
   getBoardDetail,
   getCard,
-  addCard,editCard,deleteCard
+  addCard,
+  editCard,
+  deleteCard,
+  sharedBoard,
+  getSharedBoardDetail,
 };

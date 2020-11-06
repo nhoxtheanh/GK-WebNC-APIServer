@@ -25,6 +25,7 @@ const boardSchema = new mongoose.Schema({
     name: { type: String, required: true, maxlength: 128 },
     createdAt: { type: Number, default: Date.now },
     isActive: { type: Boolean, default: true },
+    sharedURL: { type: String, default: "" },
 }, { collection: "Boards" }, { toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 boardSchema.index({ coords: "2dsphere" });

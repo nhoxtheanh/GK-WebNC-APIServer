@@ -32,6 +32,8 @@ router.post('/boardDetail/addCard', mainController.addCard);
 router.post('/boardDetail/editCard', mainController.editCard);
 router.post('/boardDetail/deleteCard', mainController.deleteCard);
 
+router.post('/sharedBoard', mainController.sharedBoard);
+router.get('/sharedBoard/:boardKey', mainController.getSharedBoardDetail);
 
 // /* Login */
 // router.get('/login', userController.loginView);
