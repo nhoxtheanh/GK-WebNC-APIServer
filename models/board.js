@@ -12,6 +12,9 @@ module.exports = {
   getAllBoardsByUser(userID) {
     return Board.find({ ownerID: userID }).exec();
   },
+  getBoardByID(boardID) {
+    return Board.findOne({ boardID: boardID }).exec();
+  },
   addBoard(userID, name) {
     return new Board({
       ownerID: userID,

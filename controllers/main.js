@@ -70,8 +70,9 @@ const getBoardDetail = async (req, res) => {
   try {
     const payload = jwtDecode(token);
     const userID = payload.userID;
+    const board = await Board.getBoardByID(boardID);
     const boardDetails = await Board.getBoardColumns(boardID);
-    res.json({ status: 1, msg: "Ok", boardDetails: boardDetails });
+    res.json({ status: 1, msg: "Ok", boardDetails: boardDetails, boardName: board.name });
   } catch (err) {
     res.json({ status: -1, msg: err });
   }
@@ -166,9 +167,9 @@ const getSharedBoardDetail = async (req, res) => {
   try {
     const payload = jwtDecode(token);
     const userID = payload.userID;
-    const b = await Board.findBoardByURL(boardURL);
-    const boardDetails = await Board.getBoardColumns(b.boardID);
-    res.json({ status: 1, msg: "Ok", boardDetails: boardDetails });
+    const board = await Board.findBoardByURL(boardURL);
+    const boardDetails = await Board.getBoardColumns(board.boardID);
+    res.json({ status: 1, msg: "Ok", boardDetails: boardDetails, boardName: board.name });
   } catch (err) {
     res.json({ status: -1, msg: err });
   }
