@@ -65,21 +65,38 @@ app.use(passport.session());
 app.get('/auth/facebook', passport.authenticate('facebook', {scope : ['email']}));
 
 // xử lý sau khi user cho phép xác thực với facebook
-app.get('/auth/facebook/callback',
-    passport.authenticate('facebook', {
-        successRedirect: '/homeDashboard',  //////////////// check lại redirect chỗ này
-        failureRedirect: '/'
-    })
-);
+app.get('/auth/facebook/callback', passport.authenticate('facebook', { 
+  //successRedirect: '/homeDashboard',  //////////////// check lại redirect chỗ này
+  failureRedirect: '/'
+}), (req, res) => {
+    if (req.user) {
+      let user = req.user;
+      // đăng nhập hợp lệ => lấy userID gắn vào payload của token và gửi về cho client
+      var payload = { userID: user.userID };
+      var token = jwt.sign(payload, jwtOptions.secretOrKey);
+      var fullname = user.fullname;
+      res.json({
+        status: 1,
+        msg: "Đăng nhập thành công!",
+        token: token,
+        fullname: fullname,
+        userID: user.userID,
+      });
+    } else {
+      res.json({ status: -1, msg: "Đăng nhập thất bại." });
+    }
+}) ;
+
 
 passport.use(new FacebookStrategy(
   {
     clientID: configAuth.facebookAuth.clientID,
     clientSecret: configAuth.facebookAuth.clientSecret,
     callbackURL: configAuth.facebookAuth.callbackURL,
-    profileFields: ['id','displayName','email','gender']
+    profileFields: ['id','displayName','email','gender'],
+    passReqToCallback: true
   },
-  async (accessToken, refreshToken, profile, done) => {
+  async (request, accessToken, refreshToken, profile, done) => {
     const username = profile._json.id;  // lấy id của fb làm username
     const fullname = profile._json.name;
     const password = "facebook";        // password mặc định
@@ -89,19 +106,18 @@ passport.use(new FacebookStrategy(
  
     if(user) {
       console.log("Tìm thấy User trong DB");
-      console.log(user);
-      return done(null,user) // nếu thấy user tồn tại trong DB thì trả về
+      //console.log(user);
     }
     else {
       // chưa có user thì tạo mới
       console.log("Tạo User mới");
-      const newUser = await User.addUser(
+      user = await User.addUser(
         fullname,
         username,
         password
       );
-      return done(null,newUser)
     }
+    return done(null,user) // trả về user cho callback
 
     
   }
