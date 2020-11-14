@@ -17,4 +17,7 @@ router.post('/login', userController.login)
 router.get('/:userID', userController.getUserInfo);
 router.post('/:userID', userController.editUserInfo);
 
+// đăng nhập bằng facebook
+router.post('/auth/facebook', userController.loginFacebook)
+
 module.exports = router;

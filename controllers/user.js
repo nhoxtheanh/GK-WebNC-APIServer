@@ -109,6 +109,35 @@ const editUserInfo = async (req, res) => {
   }
 };
 
+
+const loginFacebook = async (req, res, next) => {
+  const { username, email, fullname } = req.body;
+  const password = "facebook"; // password mặc định
+  let user = await User.findUsername(username);// tìm kiếm User trong DB với username là id từ FB
+
+  if(user) {
+    console.log("Tìm thấy User trong DB");
+  }
+  else {
+    // chưa có user thì tạo mới
+    console.log("Tạo User mới");
+    user = await User.addUser(
+      fullname,
+      username,
+      password
+    );
+  }
+  var payload = { userID: user.userID };
+  var token = jwt.sign(payload, jwtOptions.secretOrKey);
+  res.json({
+    status: 1,
+    msg: "Đăng nhập thành công!",
+    token: token,
+    fullname: fullname,
+    userID: user.userID,
+  });
+};
+
 // const logout = async(req, res) => {
 //     req.logOut();
 //     res.redirect("/");
@@ -161,6 +190,7 @@ module.exports = {
   signup,
   getUserInfo,
   editUserInfo,
+  loginFacebook,
   //     logout,
   //     profile,
   //     yourInfo,
