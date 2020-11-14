@@ -12,6 +12,12 @@ const User = require("./models/user");
 // Database connection
 require('./database/db');
 
+// passport
+const session = require('express-session');
+/////const passport = require('passport');
+const FacebookStrategy = require('passport-facebook').Strategy;
+// Lấy thông tin những giá trị auth
+var configAuth = require('./auth/auth.js');
 
 // passport - jwt
 var passport = require('passport');
@@ -46,3 +52,69 @@ app.use('/users', usersRouter);
 app.listen(PORT, function () {
   console.log('App listening on port ' + PORT + '!');
 });
+
+
+//////////////////////////////////////////////////////////////// đăng nhập fb
+app.use(session({
+  secret: "nhoxtheanh"
+}))
+app.use(passport.initialize());
+app.use(passport.session());
+
+// khi goi facebook login
+app.get('/auth/facebook', passport.authenticate('facebook', {scope : ['email']}));
+
+// xử lý sau khi user cho phép xác thực với facebook
+app.get('/auth/facebook/callback',
+    passport.authenticate('facebook', {
+        successRedirect: '/homeDashboard',  //////////////// check lại redirect chỗ này
+        failureRedirect: '/'
+    })
+);
+
+passport.use(new FacebookStrategy(
+  {
+    clientID: configAuth.facebookAuth.clientID,
+    clientSecret: configAuth.facebookAuth.clientSecret,
+    callbackURL: configAuth.facebookAuth.callbackURL,
+    profileFields: ['id','displayName','email','gender']
+  },
+  async (accessToken, refreshToken, profile, done) => {
+    const username = profile._json.id;  // lấy id của fb làm username
+    const fullname = profile._json.name;
+    const password = "facebook";        // password mặc định
+    const email = profile._json.email;
+
+    let user = await User.findUsername(username);// tìm kiếm User trong DB với username là id từ FB
+ 
+    if(user) {
+      console.log("Tìm thấy User trong DB");
+      console.log(user);
+      return done(null,user) // nếu thấy user tồn tại trong DB thì trả về
+    }
+    else {
+      // chưa có user thì tạo mới
+      console.log("Tạo User mới");
+      const newUser = await User.addUser(
+        fullname,
+        username,
+        password
+      );
+      return done(null,newUser)
+    }
+
+    
+  }
+))
+
+passport.serializeUser((user, done) => {
+  done(null, user.username)
+})
+
+passport.deserializeUser((id, done) => {
+  User.findUsername(id, (err, user) => {
+    done(null, user)
+  })
+})
+
+//////////////////////////////////////////////////////////////// đăng nhập fb
