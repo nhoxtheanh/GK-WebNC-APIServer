@@ -120,12 +120,32 @@ const loginFacebook = async (req, res, next) => {
   }
   else {
     // chưa có user thì tạo mới
-    console.log("Tạo User mới");
-    user = await User.addUser(
-      fullname,
-      username,
-      password
-    );
+    console.log("Tạo User mới (Facebook)");
+    user = await User.createUser(fullname, username, password, email);
+  }
+  var payload = { userID: user.userID };
+  var token = jwt.sign(payload, jwtOptions.secretOrKey);
+  res.json({
+    status: 1,
+    msg: "Đăng nhập thành công!",
+    token: token,
+    fullname: fullname,
+    userID: user.userID,
+  });
+};
+
+const loginGoogle = async (req, res, next) => {
+  const { username, email, fullname } = req.body;
+  const password = "google"; // password mặc định
+  let user = await User.findUsername(username);
+
+  if(user) {
+    console.log("Tìm thấy User trong DB");
+  }
+  else {
+    // chưa có user thì tạo mới
+    console.log("Tạo User mới (Google)");
+    user = await User.createUser(fullname, username, password, email);
   }
   var payload = { userID: user.userID };
   var token = jwt.sign(payload, jwtOptions.secretOrKey);
@@ -191,6 +211,7 @@ module.exports = {
   getUserInfo,
   editUserInfo,
   loginFacebook,
+  loginGoogle,
   //     logout,
   //     profile,
   //     yourInfo,

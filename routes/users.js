@@ -20,4 +20,7 @@ router.post('/:userID', userController.editUserInfo);
 // đăng nhập bằng facebook
 router.post('/auth/facebook', userController.loginFacebook)
 
+// đăng nhập bằng google
+router.post('/auth/google', userController.loginGoogle)
+
 module.exports = router;
